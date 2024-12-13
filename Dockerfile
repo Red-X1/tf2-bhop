@@ -34,9 +34,6 @@ RUN \
   && rm "${SYSTEM2_FILE_NAME}" \
   && rm "${STAC_PLUGIN_FILE_NAME}" \
   && rm "checksum.md5" \
-  # DM is conflicting with the ready up mode
-  && rm "${SERVER_DIR}/tf/addons/sourcemod/plugins/soap_tf2dm.smx" \
-  "${SERVER_DIR}/tf/addons/sourcemod/plugins/soap_tournament.smx"
 
 ENV TEAM_SIZE=6
 ENV TF2PICKUPORG_API_ADDRESS=
