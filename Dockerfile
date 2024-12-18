@@ -5,42 +5,39 @@ LABEL maintainer="garrappachc@gmail.com"
 
 COPY checksum.md5 .
 
-ARG SYSTEM2_FILE_NAME=system2.zip
+ARG ATRSMX_PLUGIN_FILE_NAME=tf2attributes.smx
+ARG ATRSMX_PLUGIN_URL=https://github.com/FlaminSarge/tf2attributes/releases/download/v1.7.3.3/${ATRSMX_PLUGIN_FILE_NAME}
 
-ARG CONNECTOR_PLUGIN_FILE_NAME=connector.smx
-ARG CONNECTOR_PLUGIN_VERSION=0.6.0
-ARG CONNECTOR_PLUGIN_URL=https://github.com/tf2pickup-org/connector/releases/download/${CONNECTOR_PLUGIN_VERSION}/${CONNECTOR_PLUGIN_FILE_NAME}
+ARG ATRINC_PLUGIN_FILE_NAME=tf2attributes.inc
+ARG ATRINC_PLUGIN_URL=https://github.com/FlaminSarge/tf2attributes/releases/download/v1.7.3.3/${ATRINC_PLUGIN_FILE_NAME}
 
-ARG TEAMS_PLUGIN_FILE_NAME=teams.smx
-ARG TEAMS_PLUGIN_URL=https://github.com/tf2pickup-org/stadium-sm-plugin/raw/master/${TEAMS_PLUGIN_FILE_NAME}
+ARG ATRTXT_PLUGIN_FILE_NAME=tf2.attributes.txt
+ARG ATRTXT_PLUGIN_URL=https://github.com/FlaminSarge/tf2attributes/releases/download/v1.7.3.3/${ATRTXT_PLUGIN_FILE_NAME}
 
-ARG STAC_PLUGIN_VERSION=v6.0.5
-ARG STAC_PLUGIN_FILE_NAME=stac.zip
-ARG STAC_PLUGIN_URL=https://github.com/sapphonie/StAC-tf2/releases/download/${STAC_PLUGIN_VERSION}/${STAC_PLUGIN_FILE_NAME}
+ARG BHOP_PLUGIN_VERSION=1.8.0
+ARG BHOP_PLUGIN_FILE_NAME=tf-bhop.zip
+ARG BHOP_PLUGIN_URL=https://github.com/Mikusch/tf-bhop/releases/download/${BHOP_PLUGIN_VERSION}/${BHOP_PLUGIN_FILE_NAME}
 
-COPY system2.zip .
+ARG SCRMBL_PLUGIN_VERSION=0.7.1.4
+ARG SCRMBL_PLUGIN_FILE_NAME=package.tar.gz
+ARG SCRMBL_PLUGIN_URL=https://github.com/nosoop/SMExt-SourceScramble/releases/download/0.7.1.4/${SCRMBL_PLUGIN_FILE_NAME}
+
 
 RUN \
   # download all the plugins
-  wget -nv "${CONNECTOR_PLUGIN_URL}" "${TEAMS_PLUGIN_URL}" "${STAC_PLUGIN_URL}" \
+  wget -nv "${SCRMBL_PLUGIN_URL}" "${ATRSMX_PLUGIN_URL}" "${ATRINC_PLUGIN_URL}" "${ATRTXT_PLUGIN_URL}" "${BHOP_PLUGIN_URL}" \
   # verify checksums
   && md5sum -c checksum.md5 \
   # install plugins
-  && unzip -q "${SYSTEM2_FILE_NAME}" -d "${SERVER_DIR}/tf/addons/sourcemod/" \
-  && mv "${CONNECTOR_PLUGIN_FILE_NAME}" "$SERVER_DIR/tf/addons/sourcemod/plugins/${CONNECTOR_PLUGIN_FILE_NAME}" \
-  && mv "${TEAMS_PLUGIN_FILE_NAME}" "$SERVER_DIR/tf/addons/sourcemod/plugins/${TEAMS_PLUGIN_FILE_NAME}" \
-  && unzip -q -o "${STAC_PLUGIN_FILE_NAME}" -d "${SERVER_DIR}/tf/addons/sourcemod/" \
+  && tar -xzf "${SCRMBL_PLUGIN_FILE_NAME}" -C "${SERVER_DIR}/tf/" \
+  && mv "${ATRSMX_PLUGIN_FILE_NAME}" "${SERVER_DIR}/tf/addons/sourcemod/plugins/${ATRSMX_PLUGIN_FILE_NAME}" \
+  && mv "${ATRINC_PLUGIN_FILE_NAME}" "${SERVER_DIR}/tf/addons/sourcemod/scripting/include/${ATRINC_PLUGIN_FILE_NAME}" \
+  && mv "${ATRTXT_PLUGIN_FILE_NAME}" "${SERVER_DIR}/tf/addons/sourcemod/gamedata/${ATRTXT_PLUGIN_FILE_NAME}" \
+  && unzip -q -o "${BHOP_PLUGIN_FILE_NAME}" -d "${SERVER_DIR}/tf/addons/sourcemod/" \
   # cleanup
-  && rm "${SYSTEM2_FILE_NAME}" \
-  && rm "${STAC_PLUGIN_FILE_NAME}" \
-  && rm "checksum.md5" \
+  && rm "${SCRMBL_PLUGIN_FILE_NAME}" \
+  && rm "${BHOP_PLUGIN_FILE_NAME}" \
+  && rm "checksum.md5"
 
-ENV TEAM_SIZE=6
-ENV TF2PICKUPORG_API_ADDRESS=
-ENV TF2PICKUPORG_SECRET=
-ENV TF2PICKUPORG_PRIORITY=1
-ENV TF2PICKUPORG_OVERRIDE_INTERNAL_ADDRESS=
-ENV TF2PICKUPORG_OVERRIDE_PUBLIC_ADDRESS=
 
 COPY server.cfg.template ${SERVER_DIR}/tf/cfg/server.cfg.template
-COPY stac.cfg  ${SERVER_DIR}/tf/cfg/sourcemod/stac.cfg
